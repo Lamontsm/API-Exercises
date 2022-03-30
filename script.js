@@ -9,18 +9,18 @@ const express = require('express')
 const mysql = require('mysql')
 const app = express();
 
-app.set('view engine', 'ejs');
+// app.set('view engine', 'ejs');
 
 // Create connection
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'root',
-    password: 'Bruno75BigBoobs',
-    database: 'Books'
+    user: 'steve',  // cannot grant root access now
+    password: 'Bruno75BigBoobs'
+    // database: 'Books'
 })
 
 // Connect to MySQL
-db.connect(err => {
+db.connect((err) => {
     if(err) {
         throw err
     }
