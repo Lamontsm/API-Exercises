@@ -6,7 +6,7 @@
 // Now to add interaction with web pages using express
 
 const express = require('express')
-const mysql = require('mysql')
+import mysql = require('mysql2')
 const app = express();
 
 // app.set('view engine', 'ejs');
@@ -14,7 +14,7 @@ const app = express();
 // Create connection
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'steve',  // cannot grant root access now
+    user: 'host',  // cannot grant root access now
     password: 'Bruno75BigBoobs'
     // database: 'Books'
 })
@@ -24,7 +24,7 @@ db.connect((err) => {
     if(err) {
         throw err
     }
-    console.log('MySQL connected')
+    console.log('MySQL connected');
 });
 
 //READ Request Handlers
