@@ -5,8 +5,8 @@
 // V2 is taking it further to passing parameters in URLs
 // Now to add interaction with web pages using express
 
-const express = require('express')
-import mysql = require('mysql2')
+const express = require('express');
+const mysql = require('mysql');
 const app = express();
 
 // app.set('view engine', 'ejs');
