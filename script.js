@@ -15,8 +15,8 @@ const app = express();
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',  // cannot grant root access now
-    password: 'Bruno75mysql#'
-    // database: 'Books'
+    password: 'Bruno75mysql#',
+    database: 'Books'
 })
 
 // Connect to MySQL
@@ -29,13 +29,13 @@ db.connect((err) => {
 
 //READ Request Handlers
 app.get('/', (req, res) => {
-    // res.send('<h1>Welcome to Steve Lamonts book demo</h1>');
+    res.send('<h1>Welcome to Steve Lamonts book demo</h1>');
     res.render('index');
 });
 
 // Create Database - not needed if created at command line
 // app.get("/createdb", (req, res) => {
-//     let sql = "CREATE DATABASE testing";
+//     let sql = "CREATE DATABASE Books";
 //     console.log("it should be created");
 //     db.query(sql, (err) => {
 //         if (err) {
@@ -46,25 +46,27 @@ app.get('/', (req, res) => {
 // });
 
 // Create Table - not needed if created at command line
-// app.get('/createbooks', (res, req) => {
-//     let sql = 'CREATE TABLE Books(Title VARCHAR(255), Author VARCHAR(255), Index_Value INT, PRIMARY KEY (Index_Value))' 
-//         db.query(sql, err =>)
-//             if(err) {
-//                 throw err
-//             }
-//             res.send('Books tabel created')
-//     })
-// })
+app.get('/createbooks', (res, req) => {
+    let sql = 'CREATE TABLE Books(Index_Value int AUTO_INCREMENT, Title VARCHAR(255), Author VARCHAR(255), PRIMARY KEY (Index_Value))' 
+        db.query(sql, (err, result) => {
+            if(err) {
+                throw err
+            }
+            res.send('Books table created');
+            console.log(result);
+    })
+})
 
 // Insert book
 app.get('/newbook', (req,res) => {
-    let post = {Title: 'Lord of the Rings', Author: 'Goldman', Index_value: 5}
-    let sql = 'INSERT INTO Books SET ?'
-    let query = db.query(sql, post, err => {
+    let post = {Title: 'Lord of the Rings', Author: 'Goldman', Index_value: 1};
+    let sql = 'INSERT INTO Books SET ?';
+    let query = db.query(sql, post, (err, result) => {
         if(err) {
             throw err
         }
-        res.send('Book added')
+        res.send('Book added');
+        console.log(result);
     })
 })
 
