@@ -14,7 +14,7 @@ const app = express();
 // Create connection
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'host',  // cannot grant root access now
+    user: 'root',  // cannot grant root access now
     password: 'Bruno75mysql#'
     // database: 'Books'
 })
