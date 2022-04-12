@@ -14,9 +14,9 @@ const app = express();
 // Create connection
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'root',  // cannot grant root access now
+    user: 'root',  
     password: 'Bruno75mysql#',
-    database: 'Books'
+    database: 'books'
 })
 
 // Connect to MySQL
@@ -34,20 +34,20 @@ app.get('/', (req, res) => {
 });
 
 // Create Database - not needed if created at command line
-// app.get("/createdb", (req, res) => {
-//     let sql = "CREATE DATABASE Books";
-//     console.log("it should be created");
-//     db.query(sql, (err) => {
-//         if (err) {
-//             throw err;
-//         }
-//         res.send("Database Created")
-//     });
-// });
+app.get("/createdb", (req, res) => {
+    let sql = "CREATE DATABASE Books";
+    console.log("it should be created");
+    db.query(sql, (err) => {
+        if (err) {
+            throw err;
+        }
+        res.send("Database Created")
+    });
+});
 
 // Create Table - not needed if created at command line
 app.get('/createbooks', (res, req) => {
-    let sql = 'CREATE TABLE Books(Index_Value int AUTO_INCREMENT, Title VARCHAR(255), Author VARCHAR(255), PRIMARY KEY (Index_Value))' 
+    let sql = 'CREATE TABLE books(Index_Value int AUTO_INCREMENT, Title VARCHAR(255), Author VARCHAR(255), PRIMARY KEY (Index_Value))' 
         db.query(sql, (err, result) => {
             if(err) {
                 throw err
@@ -59,8 +59,8 @@ app.get('/createbooks', (res, req) => {
 
 // Insert book
 app.get('/newbook', (req,res) => {
-    let post = {Title: 'Lord of the Rings', Author: 'Goldman', Index_value: 1};
-    let sql = 'INSERT INTO Books SET ?';
+    let post = {Title: 'Lord of the Rings', Author: 'Goldman'};
+    let sql = 'INSERT INTO books SET ?';
     let query = db.query(sql, post, (err, result) => {
         if(err) {
             throw err
@@ -74,11 +74,11 @@ app.get('/newbook', (req,res) => {
 app.get('/addbook', (req,res) => {
     const newTitle = req.query.title;
     const newAuthor = req.query.author;
-    //res.send(newTitle + " added");
+    res.send(newTitle + " added");
 
-    let post = {Title: newTitle, Author: newAuthor, Index_value: 55};
-    let sql = 'INSERT INTO Books SET ?'
-    let query = db.query(sql, post, err => {
+    let post = {Title: newTitle, Author: newAuthor};
+    let sql = 'INSERT INTO books SET ?'
+    let query = db.query(sql, post, (err, result) => {
         if(err) {
             throw err
         }
@@ -88,14 +88,14 @@ app.get('/addbook', (req,res) => {
 
 // Select Books
 app.get('/getbooks', (req, res) => {
-    let sql = 'SELECT * FROM Books'
+    let sql = 'SELECT * FROM books'
     let query = db.query(sql, (err, results) => {
         if(err) {
             throw err
         }
         // console.log(results[0].Title);
-        // res.send('Books details fetched')
-        res.render('booklist', {books: results});
+        res.send('Books details fetched', results); //express deprecated res.send(status, body): Use res.status(status).send(body) instead
+        // res.render('booklist', {books: results});
     })
 })
 
@@ -104,7 +104,7 @@ app.get('/getbook', (req, res) => {
     const recordNum = req.query.recordnum;
     let returnComment = '';
     // Check to see if the book exists
-    let sql = 'SELECT COUNT(id) AS total FROM Books WHERE id = ' + recordNum;
+    let sql = 'SELECT COUNT(Index_Value) AS total FROM books WHERE Index_Value = ' + recordNum;
     let query = db.query(sql, (err, result) => {
         if(err) {
             throw err
@@ -115,7 +115,7 @@ app.get('/getbook', (req, res) => {
         }
         // Fetch the book
         else {
-            let sql = 'SELECT * FROM Books WHERE id = ' + recordNum;
+            let sql = 'SELECT * FROM books WHERE Index_Value = ' + recordNum;
             let query = db.query(sql, (err, results) => {
                 if(err) {
                     throw err
@@ -134,7 +134,7 @@ app.get('/updatebook/', (req, res) => {
     const newAuth = req.query.auth;
     let returnComment = '';
      // Make sure the book is in the collection
-    let sql = 'SELECT COUNT(id) AS total FROM Books WHERE id = ' + recordNum;
+    let sql = 'SELECT COUNT(Index_Value) AS total FROM books WHERE Index_Value = ' + recordNum;
     let query = db.query(sql, (err, result) => {
         if(err) {
             throw err
@@ -146,7 +146,7 @@ app.get('/updatebook/', (req, res) => {
         // Make the changes to either Title, Author, or both
         else {
             if (newTitle != "") {
-                let sql = 'UPDATE Books SET Title = "' + newTitle + '" WHERE id = ' + recordNum;
+                let sql = 'UPDATE books SET Title = "' + newTitle + '" WHERE Index_Value = ' + recordNum;
                 returnComment = returnComment + ' Updated title to ' + newTitle;
                 let query = db.query(sql, err => {
                     if (err) {
@@ -155,7 +155,7 @@ app.get('/updatebook/', (req, res) => {
                 })
             }
             if (newAuth != '') {
-                let sql = 'UPDATE Books SET Author = "' + newAuth + '" WHERE id = ' + recordNum;
+                let sql = 'UPDATE books SET Author = "' + newAuth + '" WHERE Index_Value = ' + recordNum;
                 returnComment = returnComment + ' Updated Author to ' + newAuth;
                 let query = db.query(sql, err => {
                     if (err) {
@@ -173,7 +173,7 @@ app.get('/deletebook/:id', (req, res) => {
     // Make sure the book is in the collection
     let recordNum = req.params.id;
     let isMissing;
-    let sql = 'SELECT COUNT(id) AS total FROM Books WHERE id = ' + recordNum;
+    let sql = 'SELECT COUNT(Index_Value) AS total FROM books WHERE Index_Value = ' + recordNum;
     let query = db.query(sql, (err, result) => {
         if(err) {
             throw err
@@ -183,9 +183,10 @@ app.get('/deletebook/:id', (req, res) => {
         // Remove book if it exists. Otherwise return an error message. 
         if (isMissing){
             res.status(404).send('<h2 style="font-family: Malgun Gothic; color: darkred;">Ooops... Cant find what you are looking for!</h2>');
+            console.log('could not find book ', recordNum);
         }
         else {
-            let sql = "DELETE FROM Books WHERE id = " + recordNum;
+            let sql = "DELETE FROM books WHERE Index_Value = " + recordNum;
             let query = db.query(sql, err => {
                 if (err) {
                     throw err
