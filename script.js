@@ -74,7 +74,7 @@ app.get('/newbook', (req,res) => {
 app.get('/addbook', (req,res) => {
     const newTitle = req.query.title;
     const newAuthor = req.query.author;
-    res.send(newTitle + " added");
+    // res.send(newTitle + " added");
 
     let post = {Title: newTitle, Author: newAuthor};
     let sql = 'INSERT INTO books SET ?'
@@ -82,20 +82,18 @@ app.get('/addbook', (req,res) => {
         if(err) {
             throw err
         }
-        res.send('Book added')
+        res.send(newTitle + ' Book added')
     })
 })
 
 // Select Books
 app.get('/getbooks', (req, res) => {
-    let sql = 'SELECT * FROM books'
+    let sql = 'SELECT * FROM books';
     let query = db.query(sql, (err, results) => {
         if(err) {
             throw err
         }
-        // console.log(results[0].Title);
-        res.send('Books details fetched', results); //express deprecated res.send(status, body): Use res.status(status).send(body) instead
-        // res.render('booklist', {books: results});
+        res.status(200).send(results);
     })
 })
 
@@ -127,7 +125,7 @@ app.get('/getbook', (req, res) => {
     })
 })
 
-// Update a book
+// Update a book   TODO: Test this function
 app.get('/updatebook/', (req, res) => {
     const recordNum = req.query.recordnum;
     const newTitle = req.query.title;
@@ -169,16 +167,17 @@ app.get('/updatebook/', (req, res) => {
 })
 
 // Delete book
-app.get('/deletebook/:id', (req, res) => {
+app.get('/deletebook/', (req, res) => {
     // Make sure the book is in the collection
-    let recordNum = req.params.id;
+    let recordNum = req.query.id;
     let isMissing;
-    let sql = 'SELECT COUNT(Index_Value) AS total FROM books WHERE Index_Value = ' + recordNum;
+    let total;
+    let sql = 'SELECT count(*) FROM books WHERE Index_Value=' + recordNum;
     let query = db.query(sql, (err, result) => {
         if(err) {
             throw err
         }
-        isMissing = (result[0].total === 0);
+        isMissing = (result[0]['count(*)'] == 0);
 
         // Remove book if it exists. Otherwise return an error message. 
         if (isMissing){
