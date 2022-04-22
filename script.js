@@ -105,18 +105,8 @@ app.get('/addbook', (req,res) => {
         }
         res.send(newTitle + ' Book added')
     })
-
-    MongoClient.connect(url, function(err, db) {
-        if (err) throw err;
-        var dbo = db.db("Stevedb");
-        var date = new Date();
-        var myobj = { timestamp: date, action: 'addbook', title: newTitle, author: newAuthor};
-        dbo.collection("changelog").insertOne(myobj, function(err, res) {
-          if (err) throw err;
-          console.log("1 document inserted");
-          db.close();
-        });
-      });
+    let logEntry = {action:'Add book', title:newTitle, author:newAuthor};
+    updateLog(logEntry);
 })
 
 // Select Books
@@ -135,6 +125,7 @@ app.get('/getbook', (req, res) => {
     const recordNum = req.query.recordnum;
     let returnComment = '';
     // Check to see if the book exists
+    let logEntry = {location:recordNum, action: 'get book'};;
     let sql = 'SELECT COUNT(Index_Value) AS total FROM books WHERE Index_Value = ' + recordNum;
     let query = db.query(sql, (err, result) => {
         if(err) {
@@ -143,6 +134,7 @@ app.get('/getbook', (req, res) => {
         let isMissing = (result[0].total === 0);
         if (isMissing) {
             res.send('<h2 style="font-family: Malgun Gothic; color: darkred;">Ooops... Cant find what you are looking for!</h2>');
+            logEntry.status = 'not found';
         }
         // Fetch the book
         else {
@@ -153,32 +145,37 @@ app.get('/getbook', (req, res) => {
                 }
                 res.send(results);
                 returnComment += results;
+                logEntry.status = 'found';
             })
         }
+        updateLog(logEntry);
     })
 })
 
 // Update a book   TODO: Test this function
-app.get('/updatebook/', (req, res) => {
+app.get('/updatebook', (req, res) => {
     const recordNum = req.query.recordnum;
     const newTitle = req.query.title;
     const newAuth = req.query.auth;
     let returnComment = '';
+    let logEntry = {action:'Update Book', location:recordNum, title:newTitle, author:newAuth};
      // Make sure the book is in the collection
-    let sql = 'SELECT COUNT(Index_Value) AS total FROM books WHERE Index_Value = ' + recordNum;
+    let sql = 'SELECT count(*) FROM books WHERE Index_Value =' + recordNum;
     let query = db.query(sql, (err, result) => {
         if(err) {
             throw err
         }
-        let isMissing = (result[0].total === 0);
+        let isMissing = (result[0]['count(*)'] == 0);
         if (isMissing) {
             returnComment = '<h2 style="font-family: Malgun Gothic; color: darkred;">Ooops... Cant find what you are looking for!</h2>';
+            logEntry.status = 'missing';
         }
         // Make the changes to either Title, Author, or both
         else {
             if (newTitle != "") {
-                let sql = 'UPDATE books SET Title = ' + newTitle + ' WHERE Index_Value = ' + recordNum;
-                returnComment = returnComment + ' Updated title to ' + newTitle;
+                let sql = 'UPDATE books SET Title = "' + newTitle + '" WHERE Index_Value = ' + recordNum;
+                returnComment = returnComment + ' Updated title to ' + newTitle + '.';
+                logEntry.status = 'success';
                 let query = db.query(sql, err => {
                     if (err) {
                         throw err
@@ -186,37 +183,29 @@ app.get('/updatebook/', (req, res) => {
                 })
             }
             if (newAuth != '') {
-                let sql = 'UPDATE books SET Author = ' + newAuth + ' WHERE Index_Value = ' + recordNum;
-                console.log(sql);  // TODO remove later <<-- GETTING ERROR AT THIS POINT
-                returnComment = returnComment + ' Updated Author to ' + newAuth;
+                let sql = 'UPDATE books SET Author ="' + newAuth + '" WHERE Index_Value = ' + recordNum;
+                returnComment = returnComment + ' Updated Author to ' + newAuth + '. ';
+                logEntry.status = 'success';
                 let query = db.query(sql, err => {
                     if (err) {
                         throw err
                     }
                 })
             }
-        res.send(returnComment);
         }
     })
-    MongoClient.connect(url, function(err, db) {
-        if (err) throw err;
-        var dbo = db.db("Stevedb");
-        var date = new Date();
-        var myobj = {timestamp: date, action: 'update book', location: recordNum, title: newTitle, author: newAuth};
-        dbo.collection("changelog").insertOne(myobj, function(err, res) {
-          if (err) throw err;
-          console.log("1 document updated");
-          db.close();
-        });
-      });
+    res.send(returnComment);
+    updateLog(logEntry);
+    
 })
 
 // Delete book
 app.get('/deletebook/', (req, res) => {
     // Make sure the book is in the collection
     let recordNum = req.query.id;
-    let isMissing;
     let total;
+    let isMissing;
+    let logEntry = {action: 'delete book', location: recordNum};
     let sql = 'SELECT count(*) FROM books WHERE Index_Value=' + recordNum;
     let query = db.query(sql, (err, result) => {
         if(err) {
@@ -228,6 +217,7 @@ app.get('/deletebook/', (req, res) => {
         if (isMissing){
             res.status(404).send('<h2 style="font-family: Malgun Gothic; color: darkred;">Ooops... Cant find what you are looking for!</h2>');
             console.log('could not find book ', recordNum);
+            logEntry.status = 'not found';
         }
         else {
             let sql = "DELETE FROM books WHERE Index_Value = " + recordNum;
@@ -236,22 +226,26 @@ app.get('/deletebook/', (req, res) => {
                     throw err
                 }
                 res.send('Book deleted from index: ' + recordNum);
+                logEntry.status = 'success';
             })
         }
     })
+    updateLog(logEntry);
+})
+// Function to update logbook in MongoDB
+updateLog = function (entry){
     MongoClient.connect(url, function(err, db) {
         if (err) throw err;
         var dbo = db.db("Stevedb");
         var date = new Date();
-        var myobj = { timestamp: date, action: 'delete book', location: recordNum};
-        dbo.collection("changelog").insertOne(myobj, function(err, res) {
+        entry.timestamp = date;
+        dbo.collection("changelog").insertOne(entry, function(err, res) {
           if (err) throw err;
-          console.log("1 document deleted");
+          console.log("1 document updated");
           db.close();
         });
       });
-})
-
+}
 const port=3000;
 app.listen(port, () => {
     console.log('Server started on port', port)
