@@ -8,10 +8,11 @@
 const express = require('express');
 const mysql = require('mysql');
 const app = express();
+const mongo = require('mongodb');
 
 // app.set('view engine', 'ejs');
 
-// Create connection
+// Create MySQL connection
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',  
@@ -27,13 +28,34 @@ db.connect((err) => {
     console.log('MySQL connected');
 });
 
+// Create MongoDB database
+let MongoClient = require('mongodb').MongoClient;
+let url = "mongodb://localhost:27017/Stevedb";
+
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  console.log("MongoDB Stevedb database created!");
+  db.close();
+});
+
+// Create MongoDB collection "changelog"
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  let dbo = db.db("Stevedb");
+  dbo.createCollection("changelog", function(err, res) {
+    if (err) throw err;
+    console.log("Collection changelog created!");
+    db.close();
+  });
+});
+
 //READ Request Handlers
 app.get('/', (req, res) => {
     res.send('<h1>Welcome to Steve Lamonts book demo</h1>');
     res.render('index');
 });
 
-// Create Database - not needed if created at command line
+// Create MySQL Database - not needed if created at command line
 app.get("/createdb", (req, res) => {
     let sql = "CREATE DATABASE Books";
     console.log("it should be created");
@@ -74,7 +96,6 @@ app.get('/newbook', (req,res) => {
 app.get('/addbook', (req,res) => {
     const newTitle = req.query.title;
     const newAuthor = req.query.author;
-    // res.send(newTitle + " added");
 
     let post = {Title: newTitle, Author: newAuthor};
     let sql = 'INSERT INTO books SET ?'
@@ -84,6 +105,18 @@ app.get('/addbook', (req,res) => {
         }
         res.send(newTitle + ' Book added')
     })
+
+    MongoClient.connect(url, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("Stevedb");
+        var date = new Date();
+        var myobj = { timestamp: date, action: 'addbook', title: newTitle, author: newAuthor};
+        dbo.collection("changelog").insertOne(myobj, function(err, res) {
+          if (err) throw err;
+          console.log("1 document inserted");
+          db.close();
+        });
+      });
 })
 
 // Select Books
@@ -144,7 +177,7 @@ app.get('/updatebook/', (req, res) => {
         // Make the changes to either Title, Author, or both
         else {
             if (newTitle != "") {
-                let sql = 'UPDATE books SET Title = "' + newTitle + '" WHERE Index_Value = ' + recordNum;
+                let sql = 'UPDATE books SET Title = ' + newTitle + ' WHERE Index_Value = ' + recordNum;
                 returnComment = returnComment + ' Updated title to ' + newTitle;
                 let query = db.query(sql, err => {
                     if (err) {
@@ -153,7 +186,8 @@ app.get('/updatebook/', (req, res) => {
                 })
             }
             if (newAuth != '') {
-                let sql = 'UPDATE books SET Author = "' + newAuth + '" WHERE Index_Value = ' + recordNum;
+                let sql = 'UPDATE books SET Author = ' + newAuth + ' WHERE Index_Value = ' + recordNum;
+                console.log(sql);  // TODO remove later <<-- GETTING ERROR AT THIS POINT
                 returnComment = returnComment + ' Updated Author to ' + newAuth;
                 let query = db.query(sql, err => {
                     if (err) {
@@ -161,9 +195,20 @@ app.get('/updatebook/', (req, res) => {
                     }
                 })
             }
-        res.send('this is what I send back ' + returnComment);
+        res.send(returnComment);
         }
     })
+    MongoClient.connect(url, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("Stevedb");
+        var date = new Date();
+        var myobj = {timestamp: date, action: 'update book', location: recordNum, title: newTitle, author: newAuth};
+        dbo.collection("changelog").insertOne(myobj, function(err, res) {
+          if (err) throw err;
+          console.log("1 document updated");
+          db.close();
+        });
+      });
 })
 
 // Delete book
@@ -194,7 +239,17 @@ app.get('/deletebook/', (req, res) => {
             })
         }
     })
-    
+    MongoClient.connect(url, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("Stevedb");
+        var date = new Date();
+        var myobj = { timestamp: date, action: 'delete book', location: recordNum};
+        dbo.collection("changelog").insertOne(myobj, function(err, res) {
+          if (err) throw err;
+          console.log("1 document deleted");
+          db.close();
+        });
+      });
 })
 
 const port=3000;
