@@ -1,0 +1,9 @@
+h1 {
+    color:crimson;
+}
+.newBook {
+    display: none;
+}
+.delBook {
+    display: none;
+}

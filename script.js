@@ -10,7 +10,8 @@ const mysql = require('mysql');
 const app = express();
 const mongo = require('mongodb');
 
-// app.set('view engine', 'ejs');
+// serve your css as static
+app.use(express.static(__dirname));
 
 // Create MySQL connection
 const db = mysql.createConnection({
@@ -51,8 +52,7 @@ MongoClient.connect(url, function(err, db) {
 
 //READ Request Handlers
 app.get('/', (req, res) => {
-    res.send('<h1>Welcome to Steve Lamonts book demo</h1>');
-    res.render('index');
+    res.sendFile(__dirname + "/index.html");
 });
 
 // Create MySQL Database - not needed if created at command line
