@@ -12,19 +12,26 @@
 </head>
 
 <body>
-    <h1>welcome to steves book file app</h1>
+    <h1>Welcome to steves book file app</h1>
+    <br>
 <div>
 <h2>What do you want to do?</h2>
     <button type="button" class="btn btn-primary">Get List of Books</button>
     <br><br>
-    <button type="button" class="btn btn-primary">Add New Book</button>
+    <button type="button" class="btn btn-primary" id="addNewBook" onclick="showNewBook()">Add New Book</button>
     <br><br>
-    <div class="form-group newBook">
+    <div class="form-group" id="newBook">
+      <!-- TODO: get form to pass data to API call -->
+      <form action="/addbook"></form>  
         <label for="title">Title:</label>
         <input type="text" class="form-control" id="title">
         <label for="author">Author:</label>
         <input type="text" class="form-control" id="author">
+        <input type="submit" value="Submit">
+      </form>
       </div>
+      
+      <br>
     <button type="button" class="btn btn-primary">Delete Book</button>
     <div class="form-group delBook">
         <label for="index">Title:</label>
@@ -34,5 +41,10 @@
     <button type="button" class="btn btn-primary">Modify Book</button>
     <br><br>
 </div>
+<script>
+  function showNewBook(){
+    document.getElementById('newBook').style.display = "block";
+  }
+  </script>
 </body>
 </html>

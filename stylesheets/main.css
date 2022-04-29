@@ -1,7 +1,7 @@
 h1 {
     color:crimson;
 }
-.newBook {
+#newBook {
     display: none;
 }
 .delBook {

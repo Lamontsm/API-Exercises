@@ -79,7 +79,7 @@ app.get('/createbooks', (res, req) => {
     })
 })
 
-// Insert book
+// Insert preset book
 app.get('/newbook', (req,res) => {
     let post = {Title: 'Lord of the Rings', Author: 'Goldman'};
     let sql = 'INSERT INTO books SET ?';
