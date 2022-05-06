@@ -116,9 +116,18 @@ app.get('/getbooks', (req, res) => {
         if(err) {
             throw err
         }
-        res.status(200).send(results);
+        let first = results[0];
+        console.log(first); //TODO remove
+        console.log(first.Author, first.Title, first.Index_Value); //TODO remove
+        let outString = "<h1>" + 'Index'.padEnd(10,' ') + 'Title'.padEnd(25, ' ') + 'Author'.padEnd(25, ' ') + "</h1>";
+        results.forEach(printBooks);
+        res.status(200).send(outString);
     })
 })
+printBooks = function(current, outString) {
+    console.log(current); //TODO Getting error: TypeError: current.Index_Value.padEnd is not a function
+    outString += current.Index_Value.padEnd(10, ' ') + current.Title.padEnd(25, ' ') + current.Author.padEnd(25, ' ') + "<br>";
+}
 
 // Select a particular book by id number
 app.get('/getbook', (req, res) => {
@@ -152,7 +161,7 @@ app.get('/getbook', (req, res) => {
     })
 })
 
-// Update a book   TODO: Test this function
+// Update a book  
 app.get('/updatebook', (req, res) => {
     const recordNum = req.query.recordnum;
     const newTitle = req.query.title;
