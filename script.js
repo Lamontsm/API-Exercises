@@ -112,6 +112,7 @@ app.get('/addbook', (req,res) => {
 // Select Books
 app.get('/getbooks', (req, res) => {
     let sql = 'SELECT * FROM books';
+    let outString = "<h1>" + 'Index'.padEnd(10,' ') + 'Title'.padEnd(25, ' ') + 'Author'.padEnd(25, ' ') + "</h1>";;
     let query = db.query(sql, (err, results) => {
         if(err) {
             throw err
@@ -119,15 +120,14 @@ app.get('/getbooks', (req, res) => {
         let first = results[0];
         console.log(first); //TODO remove
         console.log(first.Author, first.Title, first.Index_Value); //TODO remove
-        let outString = "<h1>" + 'Index'.padEnd(10,' ') + 'Title'.padEnd(25, ' ') + 'Author'.padEnd(25, ' ') + "</h1>";
-        results.forEach(printBooks);
+        results.forEach(function(current) {
+            console.log('I am in printBooks' + current); //TODO Getting error: TypeError: current.Index_Value.padEnd is not a function
+            outString += current.Index_Value.padEnd(10, ' ') + current.Title.padEnd(25, ' ') + current.Author.padEnd(25, ' ') + "<br>";
+        });
         res.status(200).send(outString);
     })
 })
-printBooks = function(current, outString) {
-    console.log(current); //TODO Getting error: TypeError: current.Index_Value.padEnd is not a function
-    outString += current.Index_Value.padEnd(10, ' ') + current.Title.padEnd(25, ' ') + current.Author.padEnd(25, ' ') + "<br>";
-}
+
 
 // Select a particular book by id number
 app.get('/getbook', (req, res) => {
