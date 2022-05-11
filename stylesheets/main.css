@@ -7,3 +7,7 @@ h1 {
 #delBook {
     display: none;
 }
+#booktable {
+    border:1px
+    color: red
+}
