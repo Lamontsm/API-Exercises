@@ -113,24 +113,24 @@ app.get('/addbook', (req,res) => {
 app.get('/getbooks', (req, res) => {
     res.sendFile(__dirname + "/HTML/getbooks.html");
     let sql = 'SELECT * FROM books';
-    // let outString = "<table id='booktable'><tr><th>Title</th><th>Author</th><th>Index</th></tr>";
     let query = db.query(sql, (err, results) => {
         if(err) {
             throw err
         }
+
         for (let i=0; i<results.length; i++){
             // outString += '<tr><td>' + JSON.stringify(results[i].Title) + '</td><td>';
             // outString += JSON.stringify(results[i].Author) + '</td><td>';
             // outString += JSON.stringify(results[i].Index_Value) + '</td></tr>';
-            $(document).ready(function (){
-                $(".add-row").function () {  // TODO This needs a function. Check documentation of Jquery
-                    let outString = '<tr><td>' + JSON.stringify(results[i].Title) + '</td><td>';
-                    outString += JSON.stringify(results[i].Author) + '</td><td>';
-                    outString += JSON.stringify(results[i].Index_Value) + '</td></tr>';
-                    tableBody = $('table tbody');
-                    tableBody.append(outString);
-                }
-            }
+            // $(document).ready(function (){
+            //     $(".add-row").function () {  // TODO This needs a function. Check documentation of Jquery
+            //         let outString = '<tr><td>' + JSON.stringify(results[i].Title) + '</td><td>';
+            //         outString += JSON.stringify(results[i].Author) + '</td><td>';
+            //         outString += JSON.stringify(results[i].Index_Value) + '</td></tr>';
+            //         tableBody = $('table tbody');
+            //         tableBody.append(outString);
+            //     }
+            // }
         };
         // outString += '</table>';
         // res.status(200).send(outString); Cannot have 2 sends
