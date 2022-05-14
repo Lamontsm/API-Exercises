@@ -10,6 +10,10 @@ const mysql = require('mysql');
 const app = express();
 const mongo = require('mongodb');
 
+import $ from 'jquery';  // It does not like this
+window.jQuery = window.$ = $;
+$(selector).hide();
+
 // serve your css as static
 app.use(express.static(__dirname));
 
@@ -119,6 +123,11 @@ app.get('/getbooks', (req, res) => {
         }
 
         for (let i=0; i<results.length; i++){
+            let titleRow = JSON.stringify(results[i].Title);
+            let authorRow = JSON.stringify(results[i].Author);
+            let indexRow = JSON.stringify(results[i].Index_Value);
+            $('booktable').append("<tr><td>${titleRow}</td><td>${authorRow}</td><td>${indexRow}</td></tr>");  //JQuery not working here
+ 
             // outString += '<tr><td>' + JSON.stringify(results[i].Title) + '</td><td>';
             // outString += JSON.stringify(results[i].Author) + '</td><td>';
             // outString += JSON.stringify(results[i].Index_Value) + '</td></tr>';
