@@ -10,9 +10,9 @@ const mysql = require('mysql');
 const app = express();
 const mongo = require('mongodb');
 
-import $ from 'jquery';  // It does not like this
-window.jQuery = window.$ = $;
-$(selector).hide();
+// import $ from 'jquery';  // It does not like this
+// window.jQuery = window.$ = $;
+// $(selector).hide();
 
 // serve your css as static
 app.use(express.static(__dirname));
@@ -117,6 +117,9 @@ app.get('/addbook', (req,res) => {
 app.get('/getbooks', (req, res) => {
     res.sendFile(__dirname + "/HTML/getbooks.html");
     let sql = 'SELECT * FROM books';
+
+    document.getElementById("testing").innerHTML = "I changed this";
+
     let query = db.query(sql, (err, results) => {
         if(err) {
             throw err
@@ -126,7 +129,7 @@ app.get('/getbooks', (req, res) => {
             let titleRow = JSON.stringify(results[i].Title);
             let authorRow = JSON.stringify(results[i].Author);
             let indexRow = JSON.stringify(results[i].Index_Value);
-            $('booktable').append("<tr><td>${titleRow}</td><td>${authorRow}</td><td>${indexRow}</td></tr>");  //JQuery not working here
+            // $('booktable').append("<tr><td>${titleRow}</td><td>${authorRow}</td><td>${indexRow}</td></tr>");  //JQuery not working here
  
             // outString += '<tr><td>' + JSON.stringify(results[i].Title) + '</td><td>';
             // outString += JSON.stringify(results[i].Author) + '</td><td>';
