@@ -9,6 +9,7 @@ const express = require('express');
 const mysql = require('mysql');
 const app = express();
 const mongo = require('mongodb');
+app.set('view engine', 'ejs');
 
 // import $ from 'jquery';  // It does not like this
 // window.jQuery = window.$ = $;
@@ -58,6 +59,13 @@ MongoClient.connect(url, function(err, db) {
 app.get('/', (req, res) => {
     res.sendFile(__dirname + "/HTML/index.html");
 });
+
+//Set up express test environment
+app.get('/test', (req, res) => {
+    console.log("in test");
+    // res.send('Hi');
+    res.render('getBooks');
+})
 
 // Create MySQL Database - not needed if created at command line
 app.get("/createdb", (req, res) => {
