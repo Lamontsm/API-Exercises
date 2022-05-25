@@ -65,6 +65,7 @@ app.get('/test', (req, res) => {
     console.log("in test");
     // res.send('Hi');
     res.render('getBooks');
+    // document.getElementById('steve').innerText("Say Hi Steve");  //document not defined
 })
 
 // Create MySQL Database - not needed if created at command line
