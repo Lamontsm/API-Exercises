@@ -63,8 +63,9 @@ app.get('/', (req, res) => {
 //Set up express test environment
 app.get('/test', (req, res) => {
     console.log("in test");
-    // res.send('Hi');
-    res.render('getBooks');
+    // res.send('Hi');  
+    let output = [{'name': 'John', 'age':65}, {'name': 'Steve', 'age': 67}];
+    res.render('getBooks.ejs', {outFile:output});
     // document.getElementById('steve').innerText("Say Hi Steve");  //document not defined
 })
 
