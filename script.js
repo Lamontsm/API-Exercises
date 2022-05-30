@@ -65,8 +65,7 @@ app.get('/test', (req, res) => {
     console.log("in test");
     // res.send('Hi');  
     let output = [{'name': 'John', 'age':65}, {'name': 'Steve', 'age': 67}];
-    res.render('getBooks.ejs', {outFile:output});
-    // document.getElementById('steve').innerText("Say Hi Steve");  //document not defined
+    res.render("getBooks.ejs", {output:output});
 })
 
 // Create MySQL Database - not needed if created at command line
