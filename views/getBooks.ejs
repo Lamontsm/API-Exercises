@@ -16,11 +16,13 @@
 
     <script>
         function runScript() {
-            let inFile = '<%-output%>';
+            let inFile = "<%- output %>";
             
             // let entry = JSON.parse(inFile[0]);
             // console.log(entry);
-            console.log( typeof inFile);
+            // console.log( typeof inFile);
+            // console.log('from script ' + JSON.stringify(inFile[0].name));
+            console.log(typeof inFile, Object.values(inFile));
             for (let i=0; i<30; i++){
             console.log(inFile[i]);
             }

@@ -60,11 +60,11 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + "/HTML/index.html");
 });
 
-//Set up express test environment
+//Set up Express test environment
 app.get('/test', (req, res) => {
     console.log("in test");
     // res.send('Hi');  
-    let output = [{'name': 'John', 'age':65}, {'name': 'Steve', 'age': 67}];
+    let output = {'name': 'John', 'age':65};
     res.render("getBooks.ejs", {output:output});
 })
 
