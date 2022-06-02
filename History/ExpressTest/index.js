@@ -10,7 +10,8 @@ var app = express();
 app.set('view engine', 'ejs'); 
   
 app.get("/", function(req, res) {  
-  res.render("home", {name:'Chris Martin'});
+  // res.render("home", {name:'Chris Martin'});
+  res.render("home", {name:'James Bond', age: 65});
 });
     
 // Server setup
