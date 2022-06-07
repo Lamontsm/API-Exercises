@@ -64,6 +64,7 @@ app.get('/', (req, res) => {
 app.get('/test', (req, res) => {
     console.log("in test");
     // res.send('Hi');  
+    // let output = {{'entry':{'name': 'John', 'age':65}, {'entry':{'name':'Steve', 'age': 67}}};
     let output = {'name': 'John', 'age':65};
     res.render("getBooks.ejs", {output:output});
 })
