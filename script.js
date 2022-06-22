@@ -22,8 +22,8 @@ app.use(express.static(__dirname));
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',  
-    password: 'Bruno75mysql#',
-    database: 'books'
+    password: 'NHq!5&b3*tQf',
+    database: 'Books'   //Is this created?
 })
 
 // Connect to MySQL
@@ -35,25 +35,25 @@ db.connect((err) => {
 });
 
 // Create MongoDB database
-let MongoClient = require('mongodb').MongoClient;
-let url = "mongodb://localhost:27017/Stevedb";
+// let MongoClient = require('mongodb').MongoClient;
+// let url = "mongodb://localhost:27017/Stevedb";
 
-MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  console.log("MongoDB Stevedb database created!");
-  db.close();
-});
+// MongoClient.connect(url, function(err, db) {
+//   if (err) throw err;
+//   console.log("MongoDB Stevedb database created!");
+//   db.close();
+// });
 
 // Create MongoDB collection "changelog"
-MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  let dbo = db.db("Stevedb");
-  dbo.createCollection("changelog", function(err, res) {
-    if (err) throw err;
-    console.log("Collection changelog created!");
-    db.close();
-  });
-});
+// MongoClient.connect(url, function(err, db) {
+//   if (err) throw err;
+//   let dbo = db.db("Stevedb");
+//   dbo.createCollection("changelog", function(err, res) {
+//     if (err) throw err;
+//     console.log("Collection changelog created!");
+//     db.close();
+//   });
+// });
 
 //READ Request Handlers
 app.get('/', (req, res) => {
