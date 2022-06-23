@@ -23,7 +23,7 @@ const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',  
     password: 'NHq!5&b3*tQf',
-    database: 'Books'   //Is this created?
+    database: 'Books' 
 })
 
 // Connect to MySQL
@@ -83,7 +83,7 @@ app.get("/createdb", (req, res) => {
 
 // Create Table - not needed if created at command line
 app.get('/createbooks', (res, req) => {
-    let sql = 'CREATE TABLE books(Index_Value int AUTO_INCREMENT, Title VARCHAR(255), Author VARCHAR(255), PRIMARY KEY (Index_Value))' 
+    let sql = 'CREATE TABLE Books(Index_Value int AUTO_INCREMENT, Title VARCHAR(255), Author VARCHAR(255), PRIMARY KEY (Index_Value))' 
         db.query(sql, (err, result) => {
             if(err) {
                 throw err
@@ -96,7 +96,7 @@ app.get('/createbooks', (res, req) => {
 // Insert preset book
 app.get('/newbook', (req,res) => {
     let post = {Title: 'Lord of the Rings', Author: 'Goldman'};
-    let sql = 'INSERT INTO books SET ?';
+    let sql = 'INSERT INTO Books SET ?';
     let query = db.query(sql, post, (err, result) => {
         if(err) {
             throw err
@@ -112,7 +112,7 @@ app.get('/addbook', (req,res) => {
     const newAuthor = req.query.author;
 
     let post = {Title: newTitle, Author: newAuthor};
-    let sql = 'INSERT INTO books SET ?'
+    let sql = 'INSERT INTO Books SET ?'
     let query = db.query(sql, post, (err, result) => {
         if(err) {
             throw err
@@ -126,7 +126,7 @@ app.get('/addbook', (req,res) => {
 // Select Books
 app.get('/getbooks', (req, res) => {
     res.sendFile(__dirname + "/HTML/getbooks.html");
-    let sql = 'SELECT * FROM books';
+    let sql = 'SELECT * FROM Books';
 
     document.getElementById("testing").innerHTML = "I changed this";
 
@@ -166,7 +166,7 @@ app.get('/getbook', (req, res) => {
     let returnComment = '';
     // Check to see if the book exists
     let logEntry = {location:recordNum, action: 'get book'};;
-    let sql = 'SELECT COUNT(Index_Value) AS total FROM books WHERE Index_Value = ' + recordNum;
+    let sql = 'SELECT COUNT(Index_Value) AS total FROM Books WHERE Index_Value = ' + recordNum;
     let query = db.query(sql, (err, result) => {
         if(err) {
             throw err
@@ -178,7 +178,7 @@ app.get('/getbook', (req, res) => {
         }
         // Fetch the book
         else {
-            let sql = 'SELECT * FROM books WHERE Index_Value = ' + recordNum;
+            let sql = 'SELECT * FROM Books WHERE Index_Value = ' + recordNum;
             let query = db.query(sql, (err, results) => {
                 if(err) {
                     throw err
@@ -200,7 +200,7 @@ app.get('/updatebook', (req, res) => {
     let returnComment = '';
     let logEntry = {action:'Update Book', location:recordNum, title:newTitle, author:newAuth};
      // Make sure the book is in the collection
-    let sql = 'SELECT count(*) FROM books WHERE Index_Value =' + recordNum;
+    let sql = 'SELECT count(*) FROM Books WHERE Index_Value =' + recordNum;
     let query = db.query(sql, (err, result) => {
         if(err) {
             throw err
@@ -213,7 +213,7 @@ app.get('/updatebook', (req, res) => {
         // Make the changes to either Title, Author, or both
         else {
             if (newTitle != "") {
-                let sql = 'UPDATE books SET Title = "' + newTitle + '" WHERE Index_Value = ' + recordNum;
+                let sql = 'UPDATE Books SET Title = "' + newTitle + '" WHERE Index_Value = ' + recordNum;
                 returnComment = returnComment + ' Updated title to ' + newTitle + '.';
                 logEntry.status = 'success';
                 let query = db.query(sql, err => {
@@ -223,7 +223,7 @@ app.get('/updatebook', (req, res) => {
                 })
             }
             if (newAuth != '') {
-                let sql = 'UPDATE books SET Author ="' + newAuth + '" WHERE Index_Value = ' + recordNum;
+                let sql = 'UPDATE Books SET Author ="' + newAuth + '" WHERE Index_Value = ' + recordNum;
                 returnComment = returnComment + ' Updated Author to ' + newAuth + '. ';
                 logEntry.status = 'success';
                 let query = db.query(sql, err => {
@@ -246,7 +246,7 @@ app.get('/deletebook/', (req, res) => {
     let total;
     let isMissing;
     let logEntry = {action: 'delete book', location: recordNum};
-    let sql = 'SELECT count(*) FROM books WHERE Index_Value=' + recordNum;
+    let sql = 'SELECT count(*) FROM Books WHERE Index_Value=' + recordNum;
     let query = db.query(sql, (err, result) => {
         if(err) {
             throw err
@@ -260,7 +260,7 @@ app.get('/deletebook/', (req, res) => {
             logEntry.status = 'not found';
         }
         else {
-            let sql = "DELETE FROM books WHERE Index_Value = " + recordNum;
+            let sql = "DELETE FROM Books WHERE Index_Value = " + recordNum;
             let query = db.query(sql, err => {
                 if (err) {
                     throw err
