@@ -35,25 +35,25 @@ db.connect((err) => {
 });
 
 // Create MongoDB database
-// let MongoClient = require('mongodb').MongoClient;
-// let url = "mongodb://localhost:27017/Stevedb";
+let MongoClient = require('mongodb').MongoClient;
+let url = "mongodb://localhost:27017/Stevedb";
 
-// MongoClient.connect(url, function(err, db) {
-//   if (err) throw err;
-//   console.log("MongoDB Stevedb database created!");
-//   db.close();
-// });
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  console.log("MongoDB Stevedb database created!");
+  db.close();
+});
 
 // Create MongoDB collection "changelog"
-// MongoClient.connect(url, function(err, db) {
-//   if (err) throw err;
-//   let dbo = db.db("Stevedb");
-//   dbo.createCollection("changelog", function(err, res) {
-//     if (err) throw err;
-//     console.log("Collection changelog created!");
-//     db.close();
-//   });
-// });
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  let dbo = db.db("Stevedb");
+  dbo.createCollection("changelog", function(err, res) {
+    if (err) throw err;
+    console.log("Collection changelog created!");
+    db.close();
+  });
+});
 
 //READ Request Handlers
 app.get('/', (req, res) => {
