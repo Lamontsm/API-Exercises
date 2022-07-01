@@ -45,15 +45,15 @@ MongoClient.connect(url, function(err, db) {
 });
 
 // Create MongoDB collection "changelog"
-MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  let dbo = db.db("Stevedb");
-  dbo.createCollection("changelog", function(err, res) {
-    if (err) throw err;
-    console.log("Collection changelog created!");
-    db.close();
-  });
-});
+// MongoClient.connect(url, function(err, db) {
+//   if (err) throw err;
+//   let dbo = db.db("Stevedb");
+//   dbo.createCollection("changelog", function(err, res) {
+//     if (err) throw err;
+//     console.log("Collection changelog created!");
+//     db.close();
+//   });
+// });
 
 //READ Request Handlers
 app.get('/', (req, res) => {
@@ -103,6 +103,8 @@ app.get('/newbook', (req,res) => {
         }
         res.send('Book added');
         console.log(result);
+        let logEntry = {action:'Add book', title:'Lord of the Rings', author:'Goldman'};
+    updateLog(logEntry);
     })
 })
 
@@ -128,7 +130,7 @@ app.get('/getbooks', (req, res) => {
     res.sendFile(__dirname + "/HTML/getbooks.html");
     let sql = 'SELECT * FROM Books';
 
-    document.getElementById("testing").innerHTML = "I changed this";
+    // document.getElementById("testing").innerHTML = "I changed this";
 
     let query = db.query(sql, (err, results) => {
         if(err) {
