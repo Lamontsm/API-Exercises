@@ -11,10 +11,6 @@ const app = express();
 const mongo = require('mongodb');
 app.set('view engine', 'ejs');
 
-// import $ from 'jquery';  // It does not like this
-// window.jQuery = window.$ = $;
-// $(selector).hide();
-
 // serve your css as static
 app.use(express.static(__dirname));
 
@@ -59,15 +55,6 @@ MongoClient.connect(url, function(err, db) {
 app.get('/', (req, res) => {
     res.sendFile(__dirname + "/HTML/index.html");
 });
-
-//Set up Express test environment
-app.get('/test', (req, res) => {
-    console.log("in test");
-    // res.send('Hi');  
-    // let output = {{'entry':{'name': 'John', 'age':65}, {'entry':{'name':'Steve', 'age': 67}}};
-    let output = {'name': 'John', 'age':65};
-    res.render("getBooks.ejs", {output:output});
-})
 
 // Create MySQL Database - not needed if created at command line
 app.get("/createdb", (req, res) => {
@@ -125,9 +112,21 @@ app.get('/addbook', (req,res) => {
     updateLog(logEntry);
 })
 
+//Set up Express test environment
+app.get('/test', (req, res) => {
+    // console.log("in test");
+    // res.send('Hi');  
+    // let output = {'name': 'John', 'age':65};
+    // let output = {'headers':{0:'name', 1:'age'}, {'data':{0;{'name': 'John', 'age':65}, 1:{'name':'Steve', 'age':67}}};
+    let output = {'data':[{"Index_Value":1,"Title":"Roget's Thesaurus","Author":"Roget er al"},{"Index_Value":5,"Title":"Lord of the Rings","Author":"Goldman"}]};
+    // let listing = output.data;
+    // console.log(listing[0].Title);
+    res.render("getBooks.ejs", {output:output});
+})
+
 // Select Books
 app.get('/getbooks', (req, res) => {
-    res.sendFile(__dirname + "/HTML/getbooks.html");
+    // res.sendFile(__dirname + "/HTML/getbooks.html");
     let sql = 'SELECT * FROM Books';
 
     // document.getElementById("testing").innerHTML = "I changed this";
@@ -137,10 +136,10 @@ app.get('/getbooks', (req, res) => {
             throw err
         }
 
-        for (let i=0; i<results.length; i++){
-            let titleRow = JSON.stringify(results[i].Title);
-            let authorRow = JSON.stringify(results[i].Author);
-            let indexRow = JSON.stringify(results[i].Index_Value);
+        // for (let i=0; i<results.length; i++){
+        //     let titleRow = JSON.stringify(results[i].Title);
+        //     let authorRow = JSON.stringify(results[i].Author);
+        //     let indexRow = JSON.stringify(results[i].Index_Value);
             // $('booktable').append("<tr><td>${titleRow}</td><td>${authorRow}</td><td>${indexRow}</td></tr>");  //JQuery not working here
  
             // outString += '<tr><td>' + JSON.stringify(results[i].Title) + '</td><td>';
@@ -155,9 +154,9 @@ app.get('/getbooks', (req, res) => {
             //         tableBody.append(outString);
             //     }
             // }
-        };
+        // };
         // outString += '</table>';
-        // res.status(200).send(outString); Cannot have 2 sends
+        res.status(200).send(results); 
     })
 })
 

@@ -7,22 +7,27 @@
     <meta charset="utf-8" />
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- <script src="ejs.min.js"></script> -->
+    <!-- <script src="eijs.min.ijs"></script> -->
     <style type="text/css">
     </style>
 </head>
 
-<body onload="runScript()">
+<body>
 
     <script>
         function runScript() {
-            let inFile = "<%- output %>";
-            
-            // let entry = JSON.parse(inFile[0]);
+            let dataIn = '<%-output.data%>';
+            // dataIn = ijSON.parse(dataIn);
+            // console.log(dataIn[0]);
+            // console.log(dataIn[0].Title);
+            // let name = '<%-output.name%>';
+            // let age = '<%-output.age%>';
+            // document.getElementById('output').innerText = 'Hello ' + name + ' who is ' + age + ' years old';
+            // let entry = ijSON.parse(inFile[0]);
             // console.log(entry);
             // console.log( typeof inFile);
-            // console.log('from script ' + JSON.stringify(inFile[0].name));
-            // console.log(typeof inFile, Object.values(inFile));
+            // console.log('from script ' + ijSON.stringify(inFile[0].name));
+            // console.log(typeof inFile, Obiject.values(inFile));
             // for (let i=0; i<30; i++){
             // console.log(inFile[i]);
             // }
@@ -30,10 +35,23 @@
             // console.log('the first entry is:' + name);
         }
     </script>
-    <p>
+    
         
-        Hello <%=output.name%>, age <%=output.age%>
-    </p>
+        <table>
+            <tr> 
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+            </tr>
+        <%for (let row of output.data){%>
+            <tr>
+                <td><%=row.Index_Value%></td>
+                <td><%=row.Title%></td>
+                <td><%=row.Author%></td>
+            </tr>
+        <%}%>
+      
+    </table>
 </body>
 
 </html>
