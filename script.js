@@ -4,6 +4,8 @@
 // REST for CRUD
 // V2 is taking it further to passing parameters in URLs
 // Now to add interaction with web pages using express
+// Run this first from the command line each time
+// sudo systemctl start mongod
 
 const express = require('express');
 const mysql = require('mysql');
