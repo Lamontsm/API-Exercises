@@ -114,51 +114,19 @@ app.get('/addbook', (req,res) => {
     updateLog(logEntry);
 })
 
-//Set up Express test environment
-app.get('/test', (req, res) => {
-    // console.log("in test");
-    // res.send('Hi');  
-    // let output = {'name': 'John', 'age':65};
-    // let output = {'headers':{0:'name', 1:'age'}, {'data':{0;{'name': 'John', 'age':65}, 1:{'name':'Steve', 'age':67}}};
-    let output = {'data':[{"Index_Value":1,"Title":"Roget's Thesaurus","Author":"Roget er al"},{"Index_Value":5,"Title":"Lord of the Rings","Author":"Goldman"}]};
-    // let listing = output.data;
-    // console.log(listing[0].Title);
-    res.render("getBooks.ejs", {output:output});
-})
-
-// Select Books
+// Select all Books
 app.get('/getbooks', (req, res) => {
-    // res.sendFile(__dirname + "/HTML/getbooks.html");
-    let sql = 'SELECT * FROM Books';
 
-    // document.getElementById("testing").innerHTML = "I changed this";
+    let sql = 'SELECT * FROM Books';
 
     let query = db.query(sql, (err, results) => {
         if(err) {
             throw err
         }
-
-        // for (let i=0; i<results.length; i++){
-        //     let titleRow = JSON.stringify(results[i].Title);
-        //     let authorRow = JSON.stringify(results[i].Author);
-        //     let indexRow = JSON.stringify(results[i].Index_Value);
-            // $('booktable').append("<tr><td>${titleRow}</td><td>${authorRow}</td><td>${indexRow}</td></tr>");  //JQuery not working here
- 
-            // outString += '<tr><td>' + JSON.stringify(results[i].Title) + '</td><td>';
-            // outString += JSON.stringify(results[i].Author) + '</td><td>';
-            // outString += JSON.stringify(results[i].Index_Value) + '</td></tr>';
-            // $(document).ready(function (){
-            //     $(".add-row").function () {  // TODO This needs a function. Check documentation of Jquery
-            //         let outString = '<tr><td>' + JSON.stringify(results[i].Title) + '</td><td>';
-            //         outString += JSON.stringify(results[i].Author) + '</td><td>';
-            //         outString += JSON.stringify(results[i].Index_Value) + '</td></tr>';
-            //         tableBody = $('table tbody');
-            //         tableBody.append(outString);
-            //     }
-            // }
-        // };
-        // outString += '</table>';
-        res.status(200).send(results); 
+        let output = {'data':results};
+        // let listing = output.data;
+        // console.log(listing[0].Title);
+        res.render("getBooks.ejs", {output:output});
     })
 })
 
