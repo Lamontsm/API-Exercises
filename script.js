@@ -19,14 +19,14 @@ app.use(express.static(__dirname));
 // Create MySQL connection
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'root',  
+    user: 'root',
     password: 'NHq!5&b3*tQf',
-    database: 'Books' 
+    database: 'Books'
 })
 
 // Connect to MySQL
 db.connect((err) => {
-    if(err) {
+    if (err) {
         throw err
     }
     console.log('MySQL connected');
@@ -36,10 +36,10 @@ db.connect((err) => {
 let MongoClient = require('mongodb').MongoClient;
 let url = "mongodb://localhost:27017/Stevedb";
 
-MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  console.log("MongoDB Stevedb database created!");
-  db.close();
+MongoClient.connect(url, function (err, db) {
+    if (err) throw err;
+    console.log("MongoDB Stevedb database created!");
+    db.close();
 });
 
 // Create MongoDB collection "changelog"
@@ -72,45 +72,46 @@ app.get("/createdb", (req, res) => {
 
 // Create Table - not needed if created at command line
 app.get('/createbooks', (res, req) => {
-    let sql = 'CREATE TABLE Books(Index_Value int AUTO_INCREMENT, Title VARCHAR(255), Author VARCHAR(255), PRIMARY KEY (Index_Value))' 
-        db.query(sql, (err, result) => {
-            if(err) {
-                throw err
-            }
-            res.send('Books table created');
-            console.log(result);
+    let sql = 'CREATE TABLE Books(Index_Value int AUTO_INCREMENT, Title VARCHAR(255), Author VARCHAR(255), PRIMARY KEY (Index_Value))'
+    db.query(sql, (err, result) => {
+        if (err) {
+            throw err
+        }
+        res.send('Books table created');
+        console.log(result);
     })
 })
 
 // Insert preset book
-app.get('/newbook', (req,res) => {
-    let post = {Title: 'Lord of the Rings', Author: 'Goldman'};
+app.get('/newbook', (req, res) => {
+    let post = { Title: 'Lord of the Rings', Author: 'Goldman' };
     let sql = 'INSERT INTO Books SET ?';
     let query = db.query(sql, post, (err, result) => {
-        if(err) {
+        if (err) {
             throw err
         }
-        res.send('Book added');
-        console.log(result);
-        let logEntry = {action:'Add book', title:'Lord of the Rings', author:'Goldman'};
-    updateLog(logEntry);
+        // res.send('Book added');
+        // console.log(result);
+        let logEntry = { action: 'Add book', title: 'Lord of the Rings', author: 'Goldman' };
+        updateLog(logEntry);
     })
 })
 
 // Insert book from URL parameters -- my new stuff
-app.get('/addbook', (req,res) => {
+app.get('/addbook', (req, res) => {
     const newTitle = req.query.title;
     const newAuthor = req.query.author;
 
-    let post = {Title: newTitle, Author: newAuthor};
+    let post = { Title: newTitle, Author: newAuthor };
     let sql = 'INSERT INTO Books SET ?'
     let query = db.query(sql, post, (err, result) => {
-        if(err) {
+        if (err) {
             throw err
         }
-        res.send(newTitle + ' Book added')
+        let output = {'title':newTitle,'author':newAuthor};
+        res.render("addBooks.ejs",{output:output});
     })
-    let logEntry = {action:'Add book', title:newTitle, author:newAuthor};
+    let logEntry = { action: 'Add book', title: newTitle, author: newAuthor };
     updateLog(logEntry);
 })
 
@@ -120,13 +121,13 @@ app.get('/getbooks', (req, res) => {
     let sql = 'SELECT * FROM Books';
 
     let query = db.query(sql, (err, results) => {
-        if(err) {
+        if (err) {
             throw err
         }
-        let output = {'data':results};
+        let output = { 'data': results };
         // let listing = output.data;
         // console.log(listing[0].Title);
-        res.render("getBooks.ejs", {output:output});
+        res.render("getBooks.ejs", { output: output });
     })
 })
 
@@ -136,10 +137,10 @@ app.get('/getbook', (req, res) => {
     const recordNum = req.query.recordnum;
     let returnComment = '';
     // Check to see if the book exists
-    let logEntry = {location:recordNum, action: 'get book'};;
+    let logEntry = { location: recordNum, action: 'get book' };;
     let sql = 'SELECT COUNT(Index_Value) AS total FROM Books WHERE Index_Value = ' + recordNum;
     let query = db.query(sql, (err, result) => {
-        if(err) {
+        if (err) {
             throw err
         }
         let isMissing = (result[0].total === 0);
@@ -151,7 +152,7 @@ app.get('/getbook', (req, res) => {
         else {
             let sql = 'SELECT * FROM Books WHERE Index_Value = ' + recordNum;
             let query = db.query(sql, (err, results) => {
-                if(err) {
+                if (err) {
                     throw err
                 }
                 res.send(results);
@@ -169,11 +170,11 @@ app.get('/updatebook', (req, res) => {
     const newTitle = req.query.title;
     const newAuth = req.query.auth;
     let returnComment = '';
-    let logEntry = {action:'Update Book', location:recordNum, title:newTitle, author:newAuth};
-     // Make sure the book is in the collection
+    let logEntry = { action: 'Update Book', location: recordNum, title: newTitle, author: newAuth };
+    // Make sure the book is in the collection
     let sql = 'SELECT count(*) FROM Books WHERE Index_Value =' + recordNum;
     let query = db.query(sql, (err, result) => {
-        if(err) {
+        if (err) {
             throw err
         }
         let isMissing = (result[0]['count(*)'] == 0);
@@ -205,9 +206,9 @@ app.get('/updatebook', (req, res) => {
             }
         }
     })
-    res.send(returnComment);
+    // res.send(returnComment);
     updateLog(logEntry);
-    
+
 })
 
 // Delete book
@@ -216,16 +217,16 @@ app.get('/deletebook/', (req, res) => {
     let recordNum = req.query.id;
     let total;
     let isMissing;
-    let logEntry = {action: 'delete book', location: recordNum};
+    let logEntry = { action: 'delete book', location: recordNum };
     let sql = 'SELECT count(*) FROM Books WHERE Index_Value=' + recordNum;
     let query = db.query(sql, (err, result) => {
-        if(err) {
+        if (err) {
             throw err
         }
         isMissing = (result[0]['count(*)'] == 0);
 
         // Remove book if it exists. Otherwise return an error message. 
-        if (isMissing){
+        if (isMissing) {
             res.status(404).send('<h2 style="font-family: Malgun Gothic; color: darkred;">Ooops... Cant find what you are looking for!</h2>');
             console.log('could not find book ', recordNum);
             logEntry.status = 'not found';
@@ -236,7 +237,7 @@ app.get('/deletebook/', (req, res) => {
                 if (err) {
                     throw err
                 }
-                res.send('Book deleted from index: ' + recordNum);
+                // res.send('Book deleted from index: ' + recordNum);
                 logEntry.status = 'success';
             })
         }
@@ -244,20 +245,20 @@ app.get('/deletebook/', (req, res) => {
     updateLog(logEntry);
 })
 // Function to update logbook in MongoDB
-updateLog = function (entry){
-    MongoClient.connect(url, function(err, db) {
+updateLog = function (entry) {
+    MongoClient.connect(url, function (err, db) {
         if (err) throw err;
         var dbo = db.db("Stevedb");
         var date = new Date();
         entry.timestamp = date;
-        dbo.collection("changelog").insertOne(entry, function(err, res) {
-          if (err) throw err;
-          console.log("1 document updated");
-          db.close();
+        dbo.collection("changelog").insertOne(entry, function (err, res) {
+            if (err) throw err;
+            console.log("1 document updated");
+            db.close();
         });
-      });
+    });
 }
-const port=3000;
+const port = 3000;
 app.listen(port, () => {
     console.log('Server started on port', port)
 });
