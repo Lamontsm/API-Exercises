@@ -108,8 +108,9 @@ app.get('/addbook', (req, res) => {
         if (err) {
             throw err
         }
-        let output = {'title':newTitle,'author':newAuthor};
-        res.render("addBooks.ejs",{output:output});
+        let outputLine = {'title':newTitle, 'author':newAuthor};
+        console.log(outputLine.title);  //this is not working
+        res.render("addBooks.ejs",{output:{'title':newTitle, 'author':newAuthor}});
     })
     let logEntry = { action: 'Add book', title: newTitle, author: newAuthor };
     updateLog(logEntry);
@@ -125,8 +126,6 @@ app.get('/getbooks', (req, res) => {
             throw err
         }
         let output = { 'data': results };
-        // let listing = output.data;
-        // console.log(listing[0].Title);
         res.render("getBooks.ejs", { output: output });
     })
 })
