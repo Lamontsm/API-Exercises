@@ -108,9 +108,8 @@ app.get('/addbook', (req, res) => {
         if (err) {
             throw err
         }
-        let outputLine = {'title':newTitle, 'author':newAuthor};
-        console.log(outputLine.title);  //this is not working
-        res.render("addBooks.ejs",{output:{'title':newTitle, 'author':newAuthor}});
+        let output = {"title":newTitle, "author":newAuthor};
+        res.render("addBooks.ejs",{output:output});
     })
     let logEntry = { action: 'Add book', title: newTitle, author: newAuthor };
     updateLog(logEntry);
@@ -134,6 +133,7 @@ app.get('/getbooks', (req, res) => {
 // Select a particular book by id number
 app.get('/getbook', (req, res) => {
     const recordNum = req.query.recordnum;
+    console.log('recordNum',recordNum);  //TODO remove later
     let returnComment = '';
     // Check to see if the book exists
     let logEntry = { location: recordNum, action: 'get book' };;
@@ -149,12 +149,16 @@ app.get('/getbook', (req, res) => {
         }
         // Fetch the book
         else {
+            console.log('line 152, recordNum= ' + recordNum);  //TODO Remove this
             let sql = 'SELECT * FROM Books WHERE Index_Value = ' + recordNum;
             let query = db.query(sql, (err, results) => {
                 if (err) {
                     throw err
                 }
-                res.send(results);
+                console.log('line 158: title: ' + results[0].Title);
+                let output = {"id":recordNum, "title":results[0].Title, "author":results[0].Author};
+                console.log('line 158:  ' + output.id + ' ' + output.title + ' ' + output.author); // TODO Remove later
+                res.render("getbook.ejs", { output: output });
                 returnComment += results;
                 logEntry.status = 'found';
             })

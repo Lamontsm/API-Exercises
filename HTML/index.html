@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="stylesheets\main.css">
 </head>
 
-<body>
+<body onload="hideBoxes()">
     <script>
         function includeHTML() {
           var z, i, elmnt, file, xhttp;
@@ -53,16 +53,26 @@
     <button type="button" class="btn btn-primary" onclick="window.location.href='/getbooks';">Get List of Books</button>
     <br>
     <br>
+    <button type="button" class="btn btn-primary" onclick="showGetBook()">Get Book by ID#</button>
+    <div id='getBook'>
+        <form action="/getbook" method="GET">
+        <label for="id">ID#</label>
+            <input type="text" class="form-control" value='' name="id">
+            <br>
+            <input type="submit" value="Submit" onclick="window.location.href='/getbook?recordnum='+id';">
+    </div>
+    <br>
+    <br>
     <button type="button" class="btn btn-primary" id="addNewBook" onclick="showNewBook()">Add New Book</button>
     <br>
     <br>
     <div id="newBook">
       <form action="/addbook" id="submitBook" method="GET" id="newBook">
         <label for="title">Title:</label>
-        <input type="text" class="form-control" name="title">
+        <input type="text" class="form-control" name="title" value="">
         <br>
         <label for="author">Author:</label>
-        <input type="text" class="form-control" name="author">
+        <input type="text" class="form-control" name="author" value="">
         <br>
         <input type="submit" value="Submit" onclick="window.location.href='/addbook?title='+title+'&author='+author';">
       </form>
@@ -73,7 +83,7 @@
     <div class="form-group" id="delBook">
       <form action="/deletebook" method="GET">
       <label for="index">Book Index:</label>
-      <input type="text" class="form-control" id="id" name="id">
+      <input type="text" class="form-control" id="id" name="id" value="">
       <input type="submit" value="Submit" onclick="window.location.href='/deletebook?id='+id';">
     </form>
     </div>
@@ -88,6 +98,16 @@
     }
     function deleteBook() {
       document.getElementById('delBook').style.display = "block";
+    }
+    function showGetBook() {
+      document.getElementById('getBook').style.display = "block";
+    }
+    function hideBoxes() {
+        document.getElementById('delBook').style.display = "none";
+        document.getElementById('getBook').style.display = "none";
+        document.getElementById('newBook').style.display = "none";
+        document.getElementById('submitBook').style.display = "none";
+        document.getElementById('updateBook').style.display = "none";
     }
   </script>
   
