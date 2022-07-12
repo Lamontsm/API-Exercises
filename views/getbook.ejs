@@ -34,6 +34,7 @@
     <div w3-include-html="./partials/header.ejs"></div> 
     <script>
         includeHTML();
+        console.log(<%-output.title%>);
     </script>
      <br>
      <h2>Book number <%-output.id%> is <em><%-output.title%></em> by <em><%-output.author%></em>.</h2>

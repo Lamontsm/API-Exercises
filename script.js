@@ -124,7 +124,7 @@ app.get('/getbooks', (req, res) => {
         if (err) {
             throw err
         }
-        let output = { 'data': results };
+        let output = { "data": results };
         res.render("getBooks.ejs", { output: output });
     })
 })
@@ -155,7 +155,7 @@ app.get('/getbook', (req, res) => {
                 if (err) {
                     throw err
                 }
-                console.log('line 158: title: ' + results[0].Title);
+                console.log('line 158: title: ' + results[0].Title);  // TODO Remove later
                 let output = {"id":recordNum, "title":results[0].Title, "author":results[0].Author};
                 console.log('line 158:  ' + output.id + ' ' + output.title + ' ' + output.author); // TODO Remove later
                 res.render("getbook.ejs", { output: output });
